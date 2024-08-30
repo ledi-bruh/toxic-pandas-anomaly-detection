@@ -8,6 +8,8 @@ __all__ = ['Base']
 class Base(DeclarativeBase):
     __abstract__ = True
 
+    __table_args__ = {'schema': 'anomaly'}
+
     metadata = MetaData(
         naming_convention={
             'ix': 'ix_%(column_0_label)s',
