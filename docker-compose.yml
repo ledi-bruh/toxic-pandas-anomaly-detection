@@ -1,0 +1,36 @@
+services:
+
+  anomaly_postgres:
+    image: postgres:16-alpine
+    container_name: anomaly_postgres
+    restart: always
+    ports:
+      - ${DB__PORT}:5432
+    volumes:
+      - ./data/pg:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB__LOGIN}
+      POSTGRES_PASSWORD: ${DB__PASSWORD}
+      POSTGRES_DB: ${DB__DATABASE}
+    networks:
+      - toxic-pandas-anomaly-net
+
+  anomaly_grafana:
+    image: grafana/grafana-enterprise:latest
+    container_name: anomaly_grafana
+    restart: always
+    ports:
+      - ${GRAFANA__PORT}:3000
+    volumes:
+      - ./data/grafana/data:/var/lib/grafana
+      - ./data/grafana/datasources:/etc/grafana/provisioning/datasources/
+      - ./data/grafana/dashboards:/etc/grafana/provisioning/dashboards/
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA__LOGIN}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA__PASSWORD}
+    networks:
+      - toxic-pandas-anomaly-net
+
+networks:
+  toxic-pandas-anomaly-net:
+    driver: bridge
