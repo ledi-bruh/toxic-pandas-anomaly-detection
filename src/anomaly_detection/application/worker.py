@@ -1,8 +1,10 @@
 import asyncio
+from time import sleep
 
 import numpy as np
 
 from src.shared import now
+from src.shared.infrastructure import ArrayBuffer
 from ...shared.infrastructure.types import SessionFactory
 from ..domain.models import AnomalyDetection
 from ..infrastructure.repositories import AnomalyDetectionRepositoryImpl
@@ -15,21 +17,43 @@ class Worker:
     def __init__(
         self,
         session_factory: SessionFactory,
+        array_buffer: ArrayBuffer,
     ):
         self._session = session_factory()
         self._anomaly_detection_repository = AnomalyDetectionRepositoryImpl(self._session)
+        self._array_buffer = array_buffer
         self._task: asyncio.Task | None = None
+        self._executor = None
+        self._loop = asyncio.get_event_loop()
+
+    def _predict(self, ar: np.ndarray):
+        print(ar.shape)
+        sleep(5)
+        return np.random.sample(), np.random.sample(), np.random.sample(), np.random.sample()
 
     async def _run(self):
         while not self._task.cancelled():
-            await asyncio.sleep(5)
-            anomaly_detection = AnomalyDetection(
-                timestamp=now(),
-                valves=np.random.sample(),
-                pumps=np.random.sample(),
-                fans=np.random.sample(),
-                slide=np.random.sample(),
+            array = self._array_buffer()
+
+            if array is None:
+                await asyncio.sleep(1)
+                continue
+
+            timestamp = now()
+            valves, pumps, fans, slide = await self._loop.run_in_executor(
+                self._executor,
+                self._predict,
+                array,
             )
+
+            anomaly_detection = AnomalyDetection(
+                timestamp=timestamp,
+                valves=valves,
+                pumps=pumps,
+                fans=fans,
+                slide=slide,
+            )
+
             try:
                 await self._anomaly_detection_repository.add(anomaly_detection)
                 await self._session.commit()

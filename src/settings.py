@@ -31,6 +31,11 @@ class Settings(BaseConfig):
         env_nested_delimiter='__',
     )
 
+    channels: int
+    freq: int
+    window_seconds: float
+    step_seconds: float
+
     db: DbSettings
 
 

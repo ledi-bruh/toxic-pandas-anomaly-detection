@@ -1,10 +1,13 @@
 from collections.abc import AsyncGenerator
 
+import numpy as np
 from sqlalchemy import URL
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncEngine, create_async_engine
 
 from src.ioc import ioc
 from src.settings import Settings
+from .array_buffer.core import ArrayBuffer
+from .array_buffer.impl import ArrayBufferImpl
 from .types import SessionFactory
 
 
@@ -33,6 +36,16 @@ async def infrastructure_plugin(settings: Settings) -> AsyncGenerator:
     ioc.register('db_connection_url', instance=connection_string)
     ioc.register(AsyncEngine, instance=engine)
     ioc.register(SessionFactory, instance=session_factory)
+
+    ioc.register(
+        ArrayBuffer,
+        instance=ArrayBufferImpl(
+            window_size=round(settings.freq * settings.window_seconds),
+            step_size=round(settings.freq * settings.step_seconds),
+            channels=settings.channels,
+            dtype=np.float32,
+        ),
+    )
 
     yield
 
