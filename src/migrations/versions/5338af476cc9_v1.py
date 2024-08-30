@@ -20,7 +20,7 @@ depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
-    op.execute('create schema anomaly')
+    # op.execute('create schema anomaly')
 
     op.create_table(
         'anomaly_detections',
