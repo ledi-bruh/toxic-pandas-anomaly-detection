@@ -1,0 +1,90 @@
+[tool.ruff]
+exclude = [
+    '.bzr',
+    '.direnv',
+    '.eggs',
+    '.git',
+    '.git-rewrite',
+    '.hg',
+    '.ipynb_checkpoints',
+    '.mypy_cache',
+    '.nox',
+    '.pants.d',
+    '.pyenv',
+    '.pytest_cache',
+    '.pytype',
+    '.ruff_cache',
+    '.svn',
+    '.tox',
+    '.env',
+    '.venv',
+    'venv',
+    '.vscode',
+    '__pypackages__',
+    '__pycache__',
+    '_build',
+    'buck-out',
+    'build',
+    'dist',
+    'node_modules',
+    'site-packages',
+    'tests',
+    'tmp',
+    'temp',
+]
+line-length = 120
+indent-width = 4
+target-version = 'py311'
+respect-gitignore = true
+
+[tool.ruff.format]
+quote-style = 'single'
+indent-style = 'space'
+skip-magic-trailing-comma = false
+line-ending = 'lf'
+docstring-code-format = false
+docstring-code-line-length = 'dynamic'
+
+[tool.ruff.lint]
+preview = true
+select = [
+    'A', 'B', 'COM', 'I', 'E', 'W', 'UP', 'Q', 'C90',
+    'F', 'ANN', 'RET', 'RSE', 'SIM', 'PTH', 'PERF', 'RUF', 'C4', 'FA', 'ISC', 'PIE',
+    'DTZ', 'SLOT', 'ARG', 'FLY', 'FURB', 'LOG', 'T10', 'ICN', 'G', 'INP', 'T20',
+]
+ignore = []
+extend-ignore = [
+    'E701',
+    'Q000', 'Q003',
+    'ISC001',
+    'COM812',
+    'ANN101', 'ANN102', 'ANN401',
+    'RUF001',
+]
+fixable = ['ALL']
+unfixable = []
+dummy-variable-rgx = ''
+ignore-init-module-imports = false
+
+[tool.ruff.lint.extend-per-file-ignores]
+'__init__.py' = ['E402', 'F401', 'F403']
+'migrations/**' = ['F403', 'INP001']
+
+[tool.ruff.lint.mccabe]
+max-complexity = 11
+
+[tool.ruff.lint.isort]
+split-on-trailing-comma = true
+force-sort-within-sections = true
+order-by-type = false
+case-sensitive = false
+length-sort = false
+length-sort-straight = false
+lines-between-types = 0
+lines-after-imports = 2
+section-order = ['future', 'standard-library', 'third-party', 'first-party', 'local-folder']
+no-lines-before = ['standard-library', 'local-folder']
+known-third-party = ['alembic']
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ['fastapi.Query', 'fastapi.Body']
