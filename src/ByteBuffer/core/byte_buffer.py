@@ -1,5 +1,5 @@
 class ByteBuffer:
-    def write(self, data: bytes) -> None:
+    def write(self, data: list[bytes]) -> None:
         raise NotImplementedError
 
     def read(self) -> bytearray:

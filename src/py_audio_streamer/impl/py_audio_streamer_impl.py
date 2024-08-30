@@ -1,7 +1,8 @@
 import pyaudio
-
-from src.ByteBuffer.core.ByteBuffer import ByteBuffer
-from src.PyAudioStreamer.core.PyAudioStreamer import PyAudioStreamer
+import numpy as np
+from src.ByteBuffer.core.byte_buffer import ByteBuffer
+from src.ByteBuffer.impl.byte_buffer_impl import ByteBufferImpl
+from src.py_audio_streamer.core.py_audio_streamer import PyAudioStreamer
 
 
 class PyAudioStreamerImpl(PyAudioStreamer):
@@ -20,7 +21,7 @@ class PyAudioStreamerImpl(PyAudioStreamer):
         try:
             while True:
                 data = self.stream.read(self.chunk_size)
-                self.buffer.write(data)
+                self.buffer.write([data])
         except KeyboardInterrupt:
             self.stop_streaming()
 
@@ -28,5 +29,3 @@ class PyAudioStreamerImpl(PyAudioStreamer):
         self.stream.stop_stream()
         self.stream.close()
         self.audio.terminate()
-
-
