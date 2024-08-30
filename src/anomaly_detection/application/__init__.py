@@ -1,0 +1,1 @@
+from .plugin import anomaly_detection_presentation_plugin

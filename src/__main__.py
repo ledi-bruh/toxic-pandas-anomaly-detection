@@ -10,10 +10,14 @@ if __name__ == '__main__':
     app = App()
 
     bootstrap(app=app, settings=settings)
+    loop = asyncio.get_event_loop()
 
     try:
-        asyncio.run(app.startapp())
+        loop.run_until_complete(app.startapp())
+        print('Started')
+        loop.run_forever()
     except BaseException as e:
         print(f'{type(e)}: {e!s}.')
     finally:
-        asyncio.run(app.shutdown())
+        loop.run_until_complete(app.shutdown())
+        print('Stopped')
