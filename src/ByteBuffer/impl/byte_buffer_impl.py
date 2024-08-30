@@ -26,7 +26,6 @@ class ByteBufferImpl:
         self.buffer = self.buffer[window_size:]
         self.length -= window_size
 
-        # Разделение данных на каналы
         channels = [window[i::num_channels] for i in range(num_channels)]
 
         return channels
