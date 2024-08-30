@@ -22,7 +22,7 @@ class Worker:
 
     async def _run(self):
         while not self._task.cancelled():
-            await asyncio.sleep(3)
+            await asyncio.sleep(5)
             anomaly_detection = AnomalyDetection(
                 timestamp=now(),
                 valves=np.random.sample(),
