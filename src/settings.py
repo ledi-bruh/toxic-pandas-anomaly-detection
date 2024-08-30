@@ -1,5 +1,5 @@
+from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
-import toml
 
 
 __all__ = [
@@ -15,6 +15,15 @@ class BaseConfig(BaseSettings):
     )
 
 
+class DbSettings(BaseConfig):
+    echo: bool = False
+    login: str
+    password: SecretStr
+    host: str
+    port: int
+    database: str
+
+
 class Settings(BaseConfig):
     model_config = SettingsConfigDict(
         env_file='.env',
@@ -22,6 +31,8 @@ class Settings(BaseConfig):
         env_nested_delimiter='__',
     )
 
+    db: DbSettings
+
 
 def load_settings() -> Settings:
-    return Settings(**toml.load('config.toml'))
+    return Settings()
