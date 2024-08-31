@@ -27,8 +27,10 @@ async def anomaly_detection_presentation_plugin(settings: Settings) -> AsyncGene
     )
 
     producer = PyAudioStreamerImpl(
-        chunk_size=settings.freq // 2,
         buffer=ioc.resolve(ArrayBuffer),
+        chunk_size=settings.freq // 2,
+        rate=settings.freq,
+        target_channels=settings.channels,
     )
 
     await worker.start()

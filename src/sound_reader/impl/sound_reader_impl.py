@@ -1,5 +1,3 @@
-from typing import Optional
-
 import librosa
 import numpy as np
 
@@ -15,15 +13,14 @@ class SoundReaderImpl(SoundReader):
         self.total_samples = len(self.audio)
         self.current_position = 0
 
-    def read_batch(self) -> Optional[np.ndarray]:
+    def read_batch(self) -> np.ndarray | None:
         if self.current_position >= self.total_samples:
             return None  # End of file
 
         end_position = min(self.current_position + self.batch_size, self.total_samples)
-        batch = self.audio[self.current_position:end_position]
+        batch = self.audio[self.current_position : end_position]
         self.current_position = end_position
         return batch
 
     def reset(self):
         self.current_position = 0
-

@@ -1,7 +1,6 @@
-from typing import Optional
 import numpy as np
 
 
 class SoundReader:
-    def read_batch(self) -> Optional[np.ndarray]:
+    def read_batch(self) -> np.ndarray | None:
         raise NotImplementedError

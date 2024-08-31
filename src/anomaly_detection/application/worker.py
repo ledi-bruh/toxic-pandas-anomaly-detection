@@ -27,7 +27,7 @@ class Worker:
         self._loop = asyncio.get_event_loop()
 
     def _predict(self, ar: np.ndarray):
-        sleep(5)
+        sleep(3)
         print('predicted', ar.shape, ar[:, 0])
         return np.random.sample(), np.random.sample(), np.random.sample(), np.random.sample()
 

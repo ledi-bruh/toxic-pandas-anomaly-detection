@@ -1,3 +1,4 @@
+from logging import Logger
 import threading
 
 import numpy as np
@@ -11,11 +12,13 @@ __all__ = ['ArrayBufferImpl']
 class ArrayBufferImpl(ArrayBuffer):
     def __init__(
         self,
+        logger: Logger,
         window_size: int,
         step_size: int,
         channels: int = 8,
         dtype: np.dtype = np.float32,
     ) -> None:
+        self._logger = logger
         self._window_size = window_size
         self._max_size = window_size * 2
         self._step_size = step_size
@@ -38,10 +41,11 @@ class ArrayBufferImpl(ArrayBuffer):
                 return None
 
             if size > self._max_size:
-                self._array_buffer = self._array_buffer[:, self._max_size:]
+                self._array_buffer = self._array_buffer[:, self._max_size :]
 
             ret = self._array_buffer[:, : self._window_size].copy()
-            self._array_buffer = self._array_buffer[:, self._step_size:]
+            self._array_buffer = self._array_buffer[:, self._step_size :]
             # print('after call', self._array_buffer.shape)
 
+        self._logger.info('Buffer: %s', self._array_buffer.shape)
         return ret

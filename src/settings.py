@@ -1,6 +1,8 @@
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from src.shared.infrastructure.logger import LoggingSettings
+
 
 __all__ = [
     'Settings',
@@ -37,6 +39,7 @@ class Settings(BaseConfig):
     step_seconds: float
 
     db: DbSettings
+    logging: LoggingSettings = LoggingSettings()
 
 
 def load_settings() -> Settings:

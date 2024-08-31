@@ -1,4 +1,5 @@
 from collections.abc import AsyncGenerator
+from logging import Logger
 
 import numpy as np
 from sqlalchemy import URL
@@ -40,6 +41,7 @@ async def infrastructure_plugin(settings: Settings) -> AsyncGenerator:
     ioc.register(
         ArrayBuffer,
         instance=ArrayBufferImpl(
+            logger=ioc.resolve(Logger),
             window_size=round(settings.freq * settings.window_seconds),
             step_size=round(settings.freq * settings.step_seconds),
             channels=settings.channels,
