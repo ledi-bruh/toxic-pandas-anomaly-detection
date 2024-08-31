@@ -18,9 +18,95 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 3,
   "links": [],
   "panels": [
+    {
+      "datasource": {
+        "default": true,
+        "type": "grafana-postgresql-datasource",
+        "uid": "edwei5vlxn280a"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "decimals": 1,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "sizing": "auto",
+        "text": {}
+      },
+      "pluginVersion": "11.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "edwei5vlxn280a"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH st AS (\r\n  SELECT\r\n    valves,\r\n    pumps,\r\n    fans,\r\n    slide\r\n  FROM anomaly_detections\r\n  WHERE $__timeFilter(timestamp)\r\n)\r\nSELECT\r\n  100*(SELECT COUNT(st.valves) FROM st WHERE st.valves > 0.8) / (SELECT COUNT(st.valves) FROM st)::FLOAT AS \"valves %\"\r\n  ,100*(SELECT COUNT(st.pumps) FROM st WHERE st.pumps > 0.8) / (SELECT COUNT(st.pumps) FROM st)::FLOAT AS \"pumps %\"\r\n  ,100*(SELECT COUNT(st.fans) FROM st WHERE st.fans > 0.8) / (SELECT COUNT(st.fans) FROM st)::FLOAT AS \"fans %\"\r\n  ,100*(SELECT COUNT(st.slide) FROM st WHERE st.slide > 0.8) / (SELECT COUNT(st.slide) FROM st)::FLOAT AS \"slide %\"\r\n;\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Частота поломок",
+      "type": "gauge"
+    },
     {
       "datasource": {
         "default": true,
@@ -37,8 +123,9 @@
             "axisBorderShow": true,
             "axisCenteredZero": false,
             "axisColorMode": "text",
+            "axisGridShow": true,
             "axisLabel": "Вероятность",
-            "axisPlacement": "auto",
+            "axisPlacement": "left",
             "axisSoftMax": 1,
             "axisSoftMin": 0,
             "barAlignment": 0,
@@ -51,7 +138,7 @@
               "tooltip": false,
               "viz": false
             },
-            "insertNulls": false,
+            "insertNulls": 60000,
             "lineInterpolation": "smooth",
             "lineStyle": {
               "fill": "solid"
@@ -92,7 +179,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 6
       },
       "id": 1,
       "options": {
@@ -138,22 +225,137 @@
       ],
       "title": "Результаты детекции",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "grafana-postgresql-datasource",
+        "uid": "edwei5vlxn280a"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "mode": "gradient",
+              "type": "gauge",
+              "valueDisplayMode": "color"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "time"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto",
+                  "wrapText": false
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 2,
+      "options": {
+        "cellHeight": "md",
+        "footer": {
+          "countRows": false,
+          "fields": [],
+          "reducer": [
+            "max"
+          ],
+          "show": true
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "edwei5vlxn280a"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n  \"timestamp\" as time,\r\n  valves,\r\n  pumps,\r\n  fans,\r\n  slide\r\nFROM\r\n  anomaly_detections\r\nWHERE\r\n  $__timeFilter(timestamp)\r\n  --AND (valves > 0.8 OR pumps > 0.8 OR fans > 0.8 OR slide > 0.8)\r\nORDER BY timestamp DESC",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "name": "MAX",
+                "parameters": [
+                  {
+                    "name": "*",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "name": "valves",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "anomaly_detections"
+        }
+      ],
+      "type": "table"
     }
   ],
-  "refresh": "10s",
+  "refresh": "5s",
   "schemaVersion": 39,
   "tags": [],
   "templating": {
     "list": []
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-10m",
     "to": "now+1m"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Detections Graph",
   "uid": "edwel3ynlfg1sa",
-  "version": 3,
+  "version": 4,
   "weekStart": ""
 }
