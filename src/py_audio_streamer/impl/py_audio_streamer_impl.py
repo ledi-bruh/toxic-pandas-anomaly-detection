@@ -1,32 +1,56 @@
-import pyaudio
+import threading
+
 import numpy as np
-from src.ByteBuffer.core.byte_buffer import ByteBuffer
-from src.ByteBuffer.impl.byte_buffer_impl import ByteBufferImpl
-from src.py_audio_streamer.core.py_audio_streamer import PyAudioStreamer
+import pyaudio
+
+from src.shared.infrastructure import ArrayBuffer
+from ..core import PyAudioStreamer
+
+
+__all__ = ['PyAudioStreamerImpl']
 
 
 class PyAudioStreamerImpl(PyAudioStreamer):
-    def __init__(self, buffer: ByteBuffer, rate=22050, chunk_size=22050, chanals = 8):
-        self.chanals = chanals
+    def __init__(
+        self,
+        buffer: ArrayBuffer,
+        chunk_size: int,
+        rate: int = 22050,
+        target_channels: int = 8,
+    ) -> None:
         self.buffer = buffer
-        self.rate = rate
         self.chunk_size = chunk_size
-        self.audio = pyaudio.PyAudio()
-        self.stream = self.audio.open(format=pyaudio.paInt16,
-                                      channels=1,
-                                      rate=self.rate,
-                                      input=True,
-                                      frames_per_buffer=self.chunk_size)
+        self.rate = rate
+        self.target_channels = target_channels
 
-    def start_streaming(self):
+        self.audio = pyaudio.PyAudio()
+        self.stream = self.audio.open(
+            format=pyaudio.paFloat32,
+            channels=1,
+            rate=self.rate,
+            input=True,
+            frames_per_buffer=self.chunk_size,
+        )
+
+        self.stop_event = threading.Event()
+        self.thread = threading.Thread(target=self._run)
+
+    def start_streaming(self) -> None:
+        self.thread.start()
+
+    def _run(self) -> None:
         try:
             while True:
                 data = self.stream.read(self.chunk_size)
-                self.buffer.write(data * self.chanals)
-        except KeyboardInterrupt:
+                ar = np.frombuffer(data, dtype=np.float32).reshape(1, -1).repeat(self.target_channels, axis=0)
+                self.buffer.write(ar.tobytes())
+        finally:
             self.stop_streaming()
 
-    def stop_streaming(self):
+    def stop_streaming(self) -> None:
         self.stream.stop_stream()
         self.stream.close()
         self.audio.terminate()
+
+        self.stop_event.set()
+        self.thread.join()

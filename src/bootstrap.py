@@ -17,4 +17,4 @@ def bootstrap(
 
     app.add_plugin(infrastructure_plugin(settings))
     app.add_plugin(anomaly_detection_infrastructure_plugin())
-    app.add_plugin(anomaly_detection_presentation_plugin())
+    app.add_plugin(anomaly_detection_presentation_plugin(settings))

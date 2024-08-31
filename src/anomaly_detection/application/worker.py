@@ -27,13 +27,14 @@ class Worker:
         self._loop = asyncio.get_event_loop()
 
     def _predict(self, ar: np.ndarray):
-        print(ar.shape)
         sleep(5)
+        print('predicted', ar.shape, ar[:, 0])
         return np.random.sample(), np.random.sample(), np.random.sample(), np.random.sample()
 
     async def _run(self):
         while not self._task.cancelled():
             array = self._array_buffer()
+            # print('-> worker')
 
             if array is None:
                 await asyncio.sleep(1)
