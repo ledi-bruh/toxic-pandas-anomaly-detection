@@ -247,8 +247,11 @@
             "filterable": true,
             "inspect": false
           },
+          "decimals": 3,
           "fieldMinMax": false,
           "mappings": [],
+          "max": 1,
+          "min": 0,
           "thresholds": {
             "mode": "percentage",
             "steps": [
@@ -356,6 +359,6 @@
   "timezone": "browser",
   "title": "Detections Graph",
   "uid": "edwel3ynlfg1sa",
-  "version": 4,
+  "version": 5,
   "weekStart": ""
 }
