@@ -33,19 +33,16 @@ class PyAudioStreamerImpl(PyAudioStreamer):
         )
 
         self.stop_event = threading.Event()
-        self.thread = threading.Thread(target=self._run)
+        self.thread = threading.Thread(target=self._run, daemon=True)
 
     def start_streaming(self) -> None:
         self.thread.start()
 
     def _run(self) -> None:
-        try:
-            while True:
-                data = self.stream.read(self.chunk_size)
-                ar = np.frombuffer(data, dtype=np.float32).reshape(1, -1).repeat(self.target_channels, axis=0)
-                self.buffer.write(ar.tobytes())
-        finally:
-            self.stop_streaming()
+        while True:
+            data = self.stream.read(self.chunk_size)
+            ar = np.frombuffer(data, dtype=np.float32).reshape(1, -1).repeat(self.target_channels, axis=0)
+            self.buffer.write(ar)
 
     def stop_streaming(self) -> None:
         self.stream.stop_stream()
@@ -53,4 +50,3 @@ class PyAudioStreamerImpl(PyAudioStreamer):
         self.audio.terminate()
 
         self.stop_event.set()
-        self.thread.join()

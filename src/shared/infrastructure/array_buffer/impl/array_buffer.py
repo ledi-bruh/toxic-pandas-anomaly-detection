@@ -27,8 +27,9 @@ class ArrayBufferImpl(ArrayBuffer):
         self._array_buffer = np.empty((self._channels, 0), self._dtype)
         self._lock = threading.Lock()
 
-    def write(self, data: bytes) -> None:
-        array = np.frombuffer(data, dtype=self._dtype).reshape((self._channels, -1))
+    def write(self, data: np.ndarray) -> None:
+        # array = np.frombuffer(data, dtype=self._dtype).reshape((self._channels, -1))
+        array = data
 
         with self._lock:
             self._array_buffer = np.c_[self._array_buffer, array]
@@ -36,16 +37,17 @@ class ArrayBufferImpl(ArrayBuffer):
 
     def __call__(self) -> np.ndarray | None:
         with self._lock:
+            self._logger.info('Buffer: %s', self._array_buffer.shape)
+
             size = self._array_buffer.shape[1]
             if size < self._window_size:
                 return None
 
             if size > self._max_size:
-                self._array_buffer = self._array_buffer[:, self._max_size :]
+                self._array_buffer = self._array_buffer[:, size - self._window_size:]
 
             ret = self._array_buffer[:, : self._window_size].copy()
-            self._array_buffer = self._array_buffer[:, self._step_size :]
+            self._array_buffer = self._array_buffer[:, self._step_size:]
             # print('after call', self._array_buffer.shape)
 
-        self._logger.info('Buffer: %s', self._array_buffer.shape)
         return ret

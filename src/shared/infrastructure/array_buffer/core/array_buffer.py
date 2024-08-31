@@ -5,7 +5,7 @@ __all__ = ['ArrayBuffer']
 
 
 class ArrayBuffer:
-    def write(self, data: bytes) -> None:
+    def write(self, data: np.ndarray) -> None:
         raise NotImplementedError
 
     def __call__(self) -> np.ndarray | None:
