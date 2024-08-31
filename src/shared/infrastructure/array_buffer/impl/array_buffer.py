@@ -44,10 +44,10 @@ class ArrayBufferImpl(ArrayBuffer):
                 return None
 
             if size > self._max_size:
-                self._array_buffer = self._array_buffer[:, size - self._window_size:]
+                self._array_buffer = self._array_buffer[:, size - self._window_size :]
 
             ret = self._array_buffer[:, : self._window_size].copy()
-            self._array_buffer = self._array_buffer[:, self._step_size:]
+            self._array_buffer = self._array_buffer[:, self._step_size :]
             # print('after call', self._array_buffer.shape)
 
         return ret

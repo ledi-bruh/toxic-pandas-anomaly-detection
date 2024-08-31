@@ -1,6 +1,7 @@
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from src.ml.settings import MlSettings
 from src.shared.infrastructure.logger import LoggingSettings
 
 
@@ -40,6 +41,7 @@ class Settings(BaseConfig):
 
     db: DbSettings
     logging: LoggingSettings = LoggingSettings()
+    ml: MlSettings
 
 
 def load_settings() -> Settings:
