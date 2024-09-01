@@ -83,7 +83,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH st AS (\r\n  SELECT\r\n    valves,\r\n    pumps,\r\n    fans,\r\n    slide\r\n  FROM anomaly_detections\r\n  WHERE $__timeFilter(timestamp)\r\n)\r\nSELECT\r\n  100*(SELECT COUNT(st.valves) FROM st WHERE st.valves > 0.5) / (SELECT COUNT(st.valves) FROM st)::FLOAT AS \"valves %\"\r\n  ,100*(SELECT COUNT(st.pumps) FROM st WHERE st.pumps > 0.5) / (SELECT COUNT(st.pumps) FROM st)::FLOAT AS \"pumps %\"\r\n  ,100*(SELECT COUNT(st.fans) FROM st WHERE st.fans > 0.5) / (SELECT COUNT(st.fans) FROM st)::FLOAT AS \"fans %\"\r\n  ,100*(SELECT COUNT(st.slide) FROM st WHERE st.slide > 0.5) / (SELECT COUNT(st.slide) FROM st)::FLOAT AS \"slide %\"\r\n;\r\n",
+          "rawSql": "WITH st AS (\r\n  SELECT\r\n    valves,\r\n    pumps,\r\n    fans,\r\n    slide\r\n  FROM anomaly_detections\r\n  WHERE $__timeFilter(timestamp)\r\n)\r\nSELECT\r\n  100*(SELECT COUNT(st.valves) FROM st WHERE st.valves > 0.5) / (SELECT COUNT(st.valves) FROM st)::FLOAT AS \"valves %\"\r\n  ,100*(SELECT COUNT(st.pumps) FROM st WHERE st.pumps > 0.5) / (SELECT COUNT(st.pumps) FROM st)::FLOAT AS \"pumps %\"\r\n  ,100*(SELECT COUNT(st.fans) FROM st WHERE st.fans > 0.5) / (SELECT COUNT(st.fans) FROM st)::FLOAT AS \"fans %\"\r\n  ,100*(SELECT COUNT(st.slide) FROM st WHERE st.slide > 0.5) / (SELECT COUNT(st.slide) FROM st)::FLOAT AS \"sliders %\"\r\n;\r\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -206,7 +206,7 @@
           "format": "time_series",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  timestamp as \"time\",\r\n  valves,\r\n  pumps,\r\n  fans,\r\n  slide\r\nFROM anomaly_detections\r\nWHERE $__timeFilter(timestamp)",
+          "rawSql": "SELECT\r\n  timestamp as \"time\",\r\n  valves,\r\n  pumps,\r\n  fans,\r\n  slide as sliders\r\nFROM anomaly_detections\r\nWHERE $__timeFilter(timestamp)",
           "refId": "A",
           "sql": {
             "columns": [],
@@ -318,7 +318,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  \"timestamp\" as time,\r\n  valves,\r\n  pumps,\r\n  fans,\r\n  slide\r\nFROM\r\n  anomaly_detections\r\nWHERE\r\n  $__timeFilter(timestamp)\r\n  --AND (valves > 0.8 OR pumps > 0.8 OR fans > 0.8 OR slide > 0.8)\r\nORDER BY timestamp DESC",
+          "rawSql": "SELECT\r\n  \"timestamp\" as time,\r\n  valves,\r\n  pumps,\r\n  fans,\r\n  slide as sliders\r\nFROM\r\n  anomaly_detections\r\nWHERE\r\n  $__timeFilter(timestamp)\r\n  --AND (valves > 0.8 OR pumps > 0.8 OR fans > 0.8 OR slide > 0.8)\r\nORDER BY timestamp DESC",
           "refId": "A",
           "sql": {
             "columns": [
@@ -364,6 +364,6 @@
   "timezone": "browser",
   "title": "Detections Graph",
   "uid": "edwel3ynlfg1sa",
-  "version": 8,
+  "version": 9,
   "weekStart": ""
 }
