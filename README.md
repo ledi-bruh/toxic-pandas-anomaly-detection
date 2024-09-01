@@ -11,11 +11,15 @@ cd project_folder
 ```
 
 ```bash
+docker-compose up -d
+```
+
+```bash
 pip install -r ./requirements/dev.txt
 ```
 
 ```bash
-docker-compose up -d
+alembic upgrade head
 ```
 
 ```bash
