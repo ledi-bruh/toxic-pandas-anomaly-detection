@@ -83,7 +83,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH st AS (\r\n  SELECT\r\n    valves,\r\n    pumps,\r\n    fans,\r\n    slide\r\n  FROM anomaly_detections\r\n  WHERE $__timeFilter(timestamp)\r\n)\r\nSELECT\r\n  100*(SELECT COUNT(st.valves) FROM st WHERE st.valves > 0.8) / (SELECT COUNT(st.valves) FROM st)::FLOAT AS \"valves %\"\r\n  ,100*(SELECT COUNT(st.pumps) FROM st WHERE st.pumps > 0.8) / (SELECT COUNT(st.pumps) FROM st)::FLOAT AS \"pumps %\"\r\n  ,100*(SELECT COUNT(st.fans) FROM st WHERE st.fans > 0.8) / (SELECT COUNT(st.fans) FROM st)::FLOAT AS \"fans %\"\r\n  ,100*(SELECT COUNT(st.slide) FROM st WHERE st.slide > 0.8) / (SELECT COUNT(st.slide) FROM st)::FLOAT AS \"slide %\"\r\n;\r\n",
+          "rawSql": "WITH st AS (\r\n  SELECT\r\n    valves,\r\n    pumps,\r\n    fans,\r\n    slide\r\n  FROM anomaly_detections\r\n  WHERE $__timeFilter(timestamp)\r\n)\r\nSELECT\r\n  100*(SELECT COUNT(st.valves) FROM st WHERE st.valves > 0.5) / (SELECT COUNT(st.valves) FROM st)::FLOAT AS \"valves %\"\r\n  ,100*(SELECT COUNT(st.pumps) FROM st WHERE st.pumps > 0.5) / (SELECT COUNT(st.pumps) FROM st)::FLOAT AS \"pumps %\"\r\n  ,100*(SELECT COUNT(st.fans) FROM st WHERE st.fans > 0.5) / (SELECT COUNT(st.fans) FROM st)::FLOAT AS \"fans %\"\r\n  ,100*(SELECT COUNT(st.slide) FROM st WHERE st.slide > 0.5) / (SELECT COUNT(st.slide) FROM st)::FLOAT AS \"slide %\"\r\n;\r\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -168,7 +168,7 @@
               },
               {
                 "color": "light-red",
-                "value": 0.8
+                "value": 0.5
               }
             ]
           }
@@ -261,7 +261,7 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 50
               }
             ]
           }
@@ -279,6 +279,10 @@
                   "type": "auto",
                   "wrapText": false
                 }
+              },
+              {
+                "id": "custom.width",
+                "value": 193
               }
             ]
           }
@@ -301,7 +305,8 @@
           ],
           "show": true
         },
-        "showHeader": true
+        "showHeader": true,
+        "sortBy": []
       },
       "pluginVersion": "11.2.0",
       "targets": [
@@ -352,13 +357,13 @@
     "list": []
   },
   "time": {
-    "from": "now-10m",
-    "to": "now+1m"
+    "from": "now-5m",
+    "to": "now+10s"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Detections Graph",
   "uid": "edwel3ynlfg1sa",
-  "version": 5,
+  "version": 7,
   "weekStart": ""
 }
