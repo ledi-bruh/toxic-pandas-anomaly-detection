@@ -4,14 +4,6 @@ import numpy as np
 from scipy.signal import welch
 
 
-source2pipeline = {
-    0: ...,  # valve
-    1: ...,  # pump
-    2: ...,  # fan
-    3: ...,  # slider
-}
-
-
 def reduce_noise(audio, sample_rate):
     return nr.reduce_noise(y=audio, sr=sample_rate)
 
@@ -40,15 +32,14 @@ def extract_features(
 
     # Извлечение спектра Уэльса (PSD)
     freqs, psd = welch(audio, fs=sample_rate)
-    psd_features = np.mean(psd)
 
     # Объединение признаков в один вектор
-    combined_features = np.hstack((mel_features, np.array([psd_features])))
+    combined_features = np.hstack((mel_features, psd))
 
     return combined_features
 
 
-def source_predict(features, pipeline) -> int:  # or float?
+def source_predict(features, pipeline) -> tuple[np.ndarray, int]:
     features = features.reshape(1, -1)
-    prediction = pipeline.predict(features)
-    return int(prediction.item())
+    probs = pipeline.predict_proba(features)
+    return probs.squeeze(), int(probs.argmax().item())

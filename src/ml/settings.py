@@ -13,3 +13,7 @@ class MlSettings(BaseSettings):
     )
 
     source_prediction_pipeline_path: Path
+    valve_anomaly_prediction_pipeline_path: Path
+    pump_anomaly_prediction_pipeline_path: Path
+    fan_anomaly_prediction_pipeline_path: Path
+    slider_anomaly_prediction_pipeline_path: Path

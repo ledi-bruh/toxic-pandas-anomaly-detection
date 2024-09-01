@@ -2,10 +2,11 @@ import asyncio
 
 import numpy as np
 
-from src.ml.types import SourcePredictionPipelineFactory
+from src.ml.types import Source2PipelineFactory, SourcePredictionPipelineFactory
 from src.shared import now
 from src.shared.infrastructure import ArrayBuffer
-from ...ml.utils import extract_features, source2pipeline, source_predict
+from ...ml.utils import extract_features, source_predict
+from ...settings import Settings
 from ...shared.infrastructure.types import SessionFactory
 from ..domain.models import AnomalyDetection
 from ..infrastructure.repositories import AnomalyDetectionRepositoryImpl
@@ -17,23 +18,28 @@ __all__ = ['Worker']
 class Worker:
     def __init__(
         self,
+        settings: Settings,
         session_factory: SessionFactory,
         array_buffer: ArrayBuffer,
         source_prediction_pipeline_factory: SourcePredictionPipelineFactory,
+        source2pipeline_factory: Source2PipelineFactory,
     ):
+        self._settings = settings
         self._session = session_factory()
         self._anomaly_detection_repository = AnomalyDetectionRepositoryImpl(self._session)
         self._array_buffer = array_buffer
         self._source_prediction_pipeline = source_prediction_pipeline_factory()
+        self._source2pipeline = source2pipeline_factory()
         self._task: asyncio.Task | None = None
         self._executor = None
         self._loop = asyncio.get_event_loop()
 
     def _predict(
         self,
-        ar: np.ndarray,
-        sample_rate: int,
+        ar: np.ndarray,  # 8x220500
+        sample_rate: int,  # 22050
         source_prediction_pipeline,
+        source2pipeline: dict,
     ):
         features = extract_features(
             array=ar,
@@ -41,29 +47,31 @@ class Worker:
             channel=None,
         )
 
-        source_label = source_predict(
+        _, source_label = source_predict(
             features=features,
             pipeline=source_prediction_pipeline,
         )
 
+        source_pipeline = source2pipeline[source_label]
+
         source_channel = source_label * 2
         print(f'{source_channel=}')
 
-        # pipeline = source2pipeline[source_label]
-        # source_features = extract_features(
-        #     array=ar,
-        #     sample_rate=sample_rate,
-        #     channel=source_channel,
-        # )
-        # anomaly_predict = source_predict(
-        #     features=source_features,
-        #     pipeline=pipeline,
-        # )
-        # print(f'{anomaly_predict=}')
-        anomaly_predict = np.random.sample()
+        source_features = extract_features(
+            array=ar,
+            sample_rate=sample_rate,
+            channel=source_channel,
+        )
+        anomaly_probs, anomaly_predict = source_predict(
+            features=source_features,
+            pipeline=source_pipeline,
+        )
+        anomaly_prob: float = anomaly_probs[0]
 
-        res = [0] * len(source2pipeline)
-        res[source_label] = anomaly_predict
+        print(f'{anomaly_predict=} || {anomaly_probs=}')
+
+        res: list[float] = [0] * len(source2pipeline)
+        res[source_label] = anomaly_prob
 
         return res
 
@@ -81,8 +89,9 @@ class Worker:
                 self._executor,
                 self._predict,
                 array,
-                22050,
+                self._settings.freq,
                 self._source_prediction_pipeline,
+                self._source2pipeline,
             )
 
             anomaly_detection = AnomalyDetection(

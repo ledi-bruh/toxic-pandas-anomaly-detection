@@ -16,6 +16,8 @@ if __name__ == '__main__':
         loop.run_until_complete(app.startapp())
         print('Started')
         loop.run_forever()
+    except KeyboardInterrupt:
+        pass
     except BaseException as e:
         print(f'{type(e)}: {e!s}.')
     finally:

@@ -4,7 +4,7 @@ from collections.abc import AsyncGenerator
 import numpy as np
 
 from src.ioc import ioc
-from src.ml.types import SourcePredictionPipelineFactory
+from src.ml.types import Source2PipelineFactory, SourcePredictionPipelineFactory
 from src.py_audio_streamer.impl.py_audio_streamer_impl import PyAudioStreamerImpl
 from src.settings import Settings
 from src.shared.infrastructure.array_buffer.core import ArrayBuffer
@@ -23,9 +23,11 @@ async def s(a):
 
 async def anomaly_detection_presentation_plugin(settings: Settings) -> AsyncGenerator:
     worker = Worker(
+        settings=settings,
         session_factory=ioc.resolve(SessionFactory),
         array_buffer=ioc.resolve(ArrayBuffer),
         source_prediction_pipeline_factory=ioc.resolve(SourcePredictionPipelineFactory),
+        source2pipeline_factory=ioc.resolve(Source2PipelineFactory),
     )
 
     producer = PyAudioStreamerImpl(
