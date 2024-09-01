@@ -244,7 +244,7 @@
               "type": "gauge",
               "valueDisplayMode": "color"
             },
-            "filterable": true,
+            "filterable": false,
             "inspect": false
           },
           "decimals": 3,
@@ -364,6 +364,6 @@
   "timezone": "browser",
   "title": "Detections Graph",
   "uid": "edwel3ynlfg1sa",
-  "version": 7,
+  "version": 8,
   "weekStart": ""
 }
